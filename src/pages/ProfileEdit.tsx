@@ -275,7 +275,7 @@ const ProfileEdit = () => {
           {/* Daily Calorie Goal */}
           <div className="rounded-xl bg-white border border-gray-200 p-4 space-y-4 shadow-sm">
             <Label className="text-gray-600 flex items-center gap-2">
-              <Target className="w-4 h-4" /> Daily Calorie Goal (cal/day)
+              <Target className="w-4 h-4" /> Daily Goal (/day)
             </Label>
             <div className="flex gap-3">
               <Input
@@ -296,7 +296,7 @@ const ProfileEdit = () => {
               </Button>
             </div>
             <p className="text-sm font-medium text-emerald-600 flex items-center gap-1.5">
-              <Zap className="w-4 h-4" /> Recommended: {calculateBMR()} cal/day
+              <Zap className="w-4 h-4" /> Recommended: {calculateBMR()} / day
             </p>
             <p className="text-xs text-gray-400">
               Your custom goal is saved. Based on your current weight, height, and activity level, our suggestion is shown above.

@@ -49,11 +49,6 @@ const Header = () => {
           <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg">
             <div className="px-3 py-3">
               <p className="text-sm font-medium text-gray-900 truncate">{user.email}</p>
-              {profile && (
-                <p className="text-xs text-gray-700">
-                  Goal: {profile.daily_calorie_goal || 2000} cal/day
-                </p>
-              )}
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem 
