@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Check, X, Video, Camera, History, Sparkles, Zap, TrendingUp } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFoodHistory } from "@/hooks/useFoodHistory";
+import { supabase } from "@/integrations/supabase/client";
 
 import Header from "@/components/Header";
 import ImageUpload from "@/components/ImageUpload";
@@ -32,7 +33,7 @@ const Index = () => {
   const [showLiveCamera, setShowLiveCamera] = useState(false);
   const [adjustedFood, setAdjustedFood] = useState(null);
 
-  const { profile } = useAuth();
+  const { profile, refreshProfile } = useAuth();
   const { history, saveToHistory, removeFromHistory, clearHistory, loading: historyLoading } = useFoodHistory();
 
   const containerRef = useRef(null);
@@ -294,9 +295,23 @@ const Index = () => {
             </div>
             
             <TabsContent value="analyze" className="pt-2">
-              <DailyCalorieTracker history={history} onGoalChange={(goal) => {
+              <DailyCalorieTracker history={history} onGoalChange={async (goal) => {
                 setDailyGoalState(goal);
                 localStorage.setItem("dailyCalorieGoal", goal.toString());
+                
+                if (profile?.user_id) {
+                  try {
+                    const { error } = await supabase
+                      .from("user_profiles")
+                      .update({ daily_calorie_goal: goal })
+                      .eq("user_id", profile.user_id);
+                    
+                    if (error) throw error;
+                    await refreshProfile();
+                  } catch (err) {
+                    console.error("Failed to sync calorie goal:", err);
+                  }
+                }
               }} />
 
               <div className="grid grid-cols-2 gap-4 mb-6">

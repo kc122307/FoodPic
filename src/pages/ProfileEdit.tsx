@@ -21,6 +21,7 @@ const ProfileEdit = () => {
   const [gender, setGender] = useState("male");
   const [activity, setActivity] = useState<"low" | "medium" | "high">("medium");
   const [goal, setGoal] = useState<"lose" | "gain" | "maintain">("maintain");
+  const [dailyCalorieGoal, setDailyCalorieGoal] = useState<number>(2000);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const ProfileEdit = () => {
       if (profile.gender) setGender(profile.gender);
       if (profile.activity) setActivity(profile.activity);
       if (profile.goal) setGoal(profile.goal);
+      if (profile.daily_calorie_goal) setDailyCalorieGoal(profile.daily_calorie_goal);
     }
   }, [profile]);
 
@@ -70,8 +72,7 @@ const ProfileEdit = () => {
   const handleSave = async () => {
     if (!user) return;
     setIsLoading(true);
-    const dailyCalories = calculateBMR();
-
+    
     try {
       const { error } = await supabase
         .from("user_profiles")
@@ -83,14 +84,14 @@ const ProfileEdit = () => {
           gender,
           activity,
           goal,
-          daily_calorie_goal: dailyCalories,
+          daily_calorie_goal: dailyCalorieGoal,
         } as any)
         .eq("user_id", user.id);
 
       if (error) throw error;
 
       await refreshProfile();
-      toast.success(`Profile updated! Daily goal: ${dailyCalories} cal`);
+      toast.success(`Profile updated! Daily goal: ${dailyCalorieGoal} cal`);
       navigate("/");
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -130,7 +131,6 @@ const ProfileEdit = () => {
           ) : (
             <p className="text-gray-400">Enter weight & height to see BMI</p>
           )}
-          <p className="text-xs text-gray-400 mt-2">Daily calorie goal: {calculateBMR()} cal</p>
         </motion.div>
 
         {/* Form */}
@@ -270,6 +270,34 @@ const ProfileEdit = () => {
                 </div>
               ))}
             </RadioGroup>
+          </div>
+
+          {/* Daily Calorie Goal */}
+          <div className="rounded-xl bg-white border border-gray-200 p-4 space-y-4 shadow-sm">
+            <Label className="text-gray-600 flex items-center gap-2">
+              <Target className="w-4 h-4" /> Daily Calorie Goal (cal/day)
+            </Label>
+            <div className="flex gap-3">
+              <Input
+                type="number"
+                value={dailyCalorieGoal}
+                onChange={(e) => setDailyCalorieGoal(parseInt(e.target.value) || 0)}
+                className="text-lg font-bold"
+              />
+              <Button 
+                variant="outline" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  setDailyCalorieGoal(calculateBMR());
+                }}
+                className="whitespace-nowrap"
+              >
+                Auto-calculate
+              </Button>
+            </div>
+            <p className="text-xs text-gray-400">
+              Customize your goal or use the button to calculate based on your BMI/activity level.
+            </p>
           </div>
 
           {/* Save Button */}
