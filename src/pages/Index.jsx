@@ -48,11 +48,8 @@ const Index = () => {
 
   useEffect(() => {
     if (profile?.daily_calorie_goal) {
-      const saved = localStorage.getItem("dailyCalorieGoal");
-      if (!saved) {
-        setDailyGoalState(profile.daily_calorie_goal);
-        localStorage.setItem("dailyCalorieGoal", profile.daily_calorie_goal.toString());
-      }
+      setDailyGoalState(profile.daily_calorie_goal);
+      localStorage.setItem("dailyCalorieGoal", profile.daily_calorie_goal.toString());
     }
   }, [profile?.daily_calorie_goal]);
 
@@ -295,7 +292,7 @@ const Index = () => {
             </div>
             
             <TabsContent value="analyze" className="pt-2">
-              <DailyCalorieTracker history={history} onGoalChange={async (goal) => {
+              <DailyCalorieTracker dailyGoal={dailyGoalState} history={history} onGoalChange={async (goal) => {
                 setDailyGoalState(goal);
                 localStorage.setItem("dailyCalorieGoal", goal.toString());
                 

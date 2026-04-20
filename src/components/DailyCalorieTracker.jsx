@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Target, Flame, Edit2, Check, Zap } from "lucide-react";
 import MathChallengeDialog from "./MathChallengeDialog";
 
-const DailyCalorieTracker = ({ history, onGoalChange }) => {
+const DailyCalorieTracker = ({ history, onGoalChange, dailyGoal: propDailyGoal }) => {
   const [dailyGoal, setDailyGoal] = useState(() => {
     const saved = localStorage.getItem("dailyCalorieGoal");
     return saved ? parseInt(saved) : 2000;
@@ -13,6 +13,13 @@ const DailyCalorieTracker = ({ history, onGoalChange }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [tempGoal, setTempGoal] = useState(dailyGoal);
   const [showMathChallenge, setShowMathChallenge] = useState(false);
+  
+  useEffect(() => {
+    if (propDailyGoal) {
+      setDailyGoal(propDailyGoal);
+      setTempGoal(propDailyGoal);
+    }
+  }, [propDailyGoal]);
 
   const today = new Date().toDateString();
   
