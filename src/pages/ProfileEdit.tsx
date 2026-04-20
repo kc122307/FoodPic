@@ -72,7 +72,7 @@ const ProfileEdit = () => {
   const handleSave = async () => {
     if (!user) return;
     setIsLoading(true);
-    
+
     try {
       const { error } = await supabase
         .from("user_profiles")
@@ -284,8 +284,8 @@ const ProfileEdit = () => {
                 onChange={(e) => setDailyCalorieGoal(parseInt(e.target.value) || 0)}
                 className="text-lg font-bold"
               />
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={(e) => {
                   e.preventDefault();
                   setDailyCalorieGoal(calculateBMR());
