@@ -21,7 +21,6 @@ const ProfileEdit = () => {
   const [gender, setGender] = useState("male");
   const [activity, setActivity] = useState<"low" | "medium" | "high">("medium");
   const [goal, setGoal] = useState<"lose" | "gain" | "maintain">("maintain");
-  const [dailyCalorieGoal, setDailyCalorieGoal] = useState<number>(2000);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -33,7 +32,6 @@ const ProfileEdit = () => {
       if (profile.gender) setGender(profile.gender);
       if (profile.activity) setActivity(profile.activity);
       if (profile.goal) setGoal(profile.goal);
-      if (profile.daily_calorie_goal) setDailyCalorieGoal(profile.daily_calorie_goal);
     }
   }, [profile]);
 
@@ -72,7 +70,8 @@ const ProfileEdit = () => {
   const handleSave = async () => {
     if (!user) return;
     setIsLoading(true);
-
+    const dailyCalories = calculateBMR();
+    
     try {
       const { error } = await supabase
         .from("user_profiles")
@@ -84,14 +83,14 @@ const ProfileEdit = () => {
           gender,
           activity,
           goal,
-          daily_calorie_goal: dailyCalorieGoal,
+          daily_calorie_goal: dailyCalories,
         } as any)
         .eq("user_id", user.id);
 
       if (error) throw error;
 
       await refreshProfile();
-      toast.success(`Profile updated! Daily goal: ${dailyCalorieGoal} cal`);
+      toast.success(`Profile updated! Recommended goal: ${dailyCalories} / day`);
       navigate("/");
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -272,34 +271,17 @@ const ProfileEdit = () => {
             </RadioGroup>
           </div>
 
-          {/* Daily Calorie Goal */}
-          <div className="rounded-xl bg-white border border-gray-200 p-4 space-y-4 shadow-sm">
-            <Label className="text-gray-600 flex items-center gap-2">
-              <Target className="w-4 h-4" /> Daily Goal (/day)
-            </Label>
-            <div className="flex gap-3">
-              <Input
-                type="number"
-                value={dailyCalorieGoal}
-                onChange={(e) => setDailyCalorieGoal(parseInt(e.target.value) || 0)}
-                className="text-lg font-bold"
-              />
-              <Button
-                variant="outline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setDailyCalorieGoal(calculateBMR());
-                }}
-                className="whitespace-nowrap"
-              >
-                Auto-calculate
-              </Button>
+          {/* Daily Goal Recommendation */}
+          <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 p-6 space-y-2 shadow-sm text-center">
+            <div className="flex items-center justify-center gap-2 text-emerald-600 mb-1">
+              <Zap className="w-5 h-5 fill-emerald-500" />
+              <span className="font-bold uppercase tracking-wider text-xs">AI Recommendation</span>
             </div>
-            <p className="text-sm font-medium text-emerald-600 flex items-center gap-1.5">
-              <Zap className="w-4 h-4" /> Recommended: {calculateBMR()} / day
+            <p className="text-3xl font-black text-gray-900">
+              {calculateBMR()} <span className="text-sm font-normal text-gray-500">/ day</span>
             </p>
-            <p className="text-xs text-gray-400">
-              Your custom goal is saved. Based on your current weight, height, and activity level, our suggestion is shown above.
+            <p className="text-xs text-gray-500 max-w-[200px] mx-auto">
+              This goal is automatically calculated based on your current weight, height, and activity.
             </p>
           </div>
 
