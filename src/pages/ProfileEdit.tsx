@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Save, Scale, Ruler, Calendar, User, Activity, Target } from "lucide-react";
+import { ArrowLeft, Save, Scale, Ruler, Calendar, User, Activity, Target, Zap } from "lucide-react";
 
 const ProfileEdit = () => {
   const { user, profile, refreshProfile } = useAuth();
@@ -295,8 +295,11 @@ const ProfileEdit = () => {
                 Auto-calculate
               </Button>
             </div>
+            <p className="text-sm font-medium text-emerald-600 flex items-center gap-1.5">
+              <Zap className="w-4 h-4" /> Recommended: {calculateBMR()} cal/day
+            </p>
             <p className="text-xs text-gray-400">
-              Customize your goal or use the button to calculate based on your BMI/activity level.
+              Your custom goal is saved. Based on your current weight, height, and activity level, our suggestion is shown above.
             </p>
           </div>
 
